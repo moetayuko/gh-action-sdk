@@ -52,6 +52,17 @@ group "feeds update -a"
 ./scripts/feeds update -a
 endgroup
 
+# replace golang with version defined in env
+if [ -n "$GOLANG_COMMIT" ] ; then
+  group "replace golang"
+	( test -d "feeds/packages/lang/golang" && \
+		rm -rf "feeds/packages/lang/golang" ) || true
+
+	curl "https://codeload.github.com/openwrt/packages/tar.gz/$GOLANG_COMMIT" | \
+		tar -xz -C "feeds/packages/lang" --strip=2 "packages-$GOLANG_COMMIT/lang/golang"
+  endgroup
+fi
+
 group "make defconfig"
 make defconfig
 endgroup
